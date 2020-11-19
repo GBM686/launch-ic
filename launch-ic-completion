@@ -1,0 +1,9 @@
+#/usr/bin/env bash
+
+ic_projects_completions()
+{
+  ICS_PROJECTS_PATH="$HOME/Documents/ics"
+  COMPREPLY=($(compgen -W "$(ls $ICS_PROJECTS_PATH)" "${COMP_WORDS[1]}"))
+}
+
+complete -F ic_projects_completions launch-ic

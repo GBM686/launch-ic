@@ -1,0 +1,78 @@
+#!/bin/bash
+
+# Set the default path for the work folder
+PROJECT_PATH="$HOME/Documents/ics"
+
+# Set BASH to quit the script and exit on errors
+set -e
+
+# Functions
+
+show_help() {
+	cat << _EOF_
+
+	This tool automatically launches an Insight-Center project's development environment:
+1. VSCode with the project's target folder
+2. Chrome on "http://localhost:8080"
+3. "yarn"
+4. "yarn start"
+
+	The tool has two running options:
+- launch-ic --last -- launching the lastly modified project in the target folder;
+- launch-ic target-folder (the tool also supports completion, so all possibilites can be listed with <tab><tab>).
+
+	 ---------------
+	| HAPPY CODING! |
+	 ---------------
+
+	Who am I kidding, it's gonna be a drudge...
+
+_EOF_
+}
+
+get_last() {
+	cd $PROJECT_PATH
+
+	LAST_MODIFIED=""
+	PROJECT=""
+
+	for dir in *; do
+		if [ -d "$dir" ]; then
+			if [[ $LAST_MODIFIED < "$(date -r $dir)" ]]; then
+				PROJECT=$dir
+				LAST_MODIFIED="$(date -r $dir)"
+			fi
+		fi
+	done
+
+	PROJECT_PATH="$PROJECT_PATH/$PROJECT"
+}
+
+launch() {
+	cd $PROJECT_PATH
+	code .
+	google-chrome http://localhost:8080
+	cd client/
+	yarn
+	yarn start
+}
+
+# Execution
+
+if ! [ -n "$1" ]; then
+	echo "Error: missing project name. Try 'launch-ic --help' for more info." >&2
+	exit
+fi
+
+if [ "$1" == "--help" ]; then
+	show_help
+	exit
+fi
+
+if [ "$1" == "--last" ]; then
+	get_last
+	launch
+fi
+
+PROJECT_PATH="$PROJECT_PATH/$1"
+launch

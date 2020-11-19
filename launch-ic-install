@@ -1,0 +1,9 @@
+#!/bin/bash
+
+chmod +x launch-ic
+chmod +x launch-ic-completion
+
+cp launch-ic /usr/bin/
+cp launch-ic-completion /etc/bash_completion.d/
+
+source ~/.bashrc
